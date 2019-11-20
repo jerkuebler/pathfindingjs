@@ -1,7 +1,7 @@
 const algorithms = ['A*', 'Dijkstra', 'Breadth First Search', 'Depth First Search'];
 addAlgorithms();
 
-const mazes = ['Recursive Division'];
+const mazes = ['Recursive Division', 'Depth First Search'];
 addMazes();
 
 let gridSize = [20, 40];
@@ -51,6 +51,9 @@ function createMaze() {
     switch (maze) {
         case 'Recursive Division':
             recursiveDivisionMaze(pathStart.id, pathEnd.id, gridSize);
+            break;
+        case 'Depth First Search':
+            DFSMaze(pathStart.id, pathEnd.id, gridSize);
             break;
     }
 }
