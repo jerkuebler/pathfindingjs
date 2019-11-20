@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="open-iconic/font/css/open-iconic.css") }}">
+</head>
+<body>
+    <div>
+        <label for="algorithm">Path Algorithm</label><select id="algorithm"></select>
+        <button id="run">Run</button>
+        <label>Algorithm Notes:</label>
+        <label id="notes">Gives the shortest path, uses location of end node to speed up run time.</label>
+    </div>
+    <div>
+        <label for="gridx">Grid X</label><input type="number" id="gridx" value="20">
+        <label for="gridy">Grid Y</label><input type="number" id="gridy" value="40">
+        <button id="updateGrid">Reset</button>
+    </div>
+    <div>
+        <label for="mazeSelect">Maze Algorithm</label><select id="mazeSelect"></select>
+        <button id="mazeButton">Create Maze</button>
+    </div>
+</body>
+<script type="text/javascript" src="{{ url_for('static', filename='js/algorithm.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/maze.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/path.js') }}"></script>
+</html>

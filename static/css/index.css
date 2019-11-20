@@ -1,0 +1,47 @@
+.grid {
+    margin:1em auto;
+    border-collapse:collapse
+}
+.grid td {
+    cursor:pointer;
+    width:30px; height:30px;
+    border:1px solid #ccc;
+    transition: background-color linear .5s;
+}
+.grid td.wall {
+    background-color:indigo;
+    transition: background-color linear .5s;
+}
+
+.grid td.viewed {
+    background-color: #403f82;
+    transition: background-color linear .5s;
+}
+
+.grid td.visited {
+    background-color: #820077;
+    transition: background-color linear .5s;
+}
+
+.grid td.path {
+    background-color: forestgreen;
+    transition: background-color linear .5s;
+}
+
+.start-image {
+    text-align: center;
+    color: aqua;
+    display:block;
+    flex-shrink: 0;
+    min-width: 80%;
+    min-height: 80%;
+}
+
+.end-image {
+    text-align: center;
+    color: aqua;
+    display:block;
+    flex-shrink: 0;
+    min-width: 80%;
+    min-height: 80%;
+}
