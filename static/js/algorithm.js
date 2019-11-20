@@ -175,6 +175,54 @@ async function recursiveDFS (start, end, gridSize) {
     return recursiveFunc(openSet, start).then(r => {return r;});
 }
 
+async function BFS(start, end, gridSize) {
+    /* No diagonal moves */
+    const neighbors = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+
+    /* create a queue to move nodes onto. Use .shift to pull first element from array */
+    let queue = [];
+
+    /* track the path back to the start node */
+    let cameFrom = {};
+
+    /* mark each node as discovered or not */
+    let discovered = {};
+
+    /* prime the queue and mark the start node as discovered */
+    discovered[start] = true;
+    queue.push(start);
+
+    /*iterate over the neighbor nodes, pushing undiscovered nodes to the queue and marking them as discovered */
+    while (queue.length > 0) {
+        const nodeID = queue.shift();
+        document.getElementById(nodeID).classList.add('visited');
+        if (nodeID === end) {
+            return constructedPath(cameFrom, nodeID, start);
+        }
+        const nodeCoords = nodeID.split('-').map(Number);
+        for (const coords of neighbors) {
+            const neighborCoords = [coords[0] + nodeCoords[0], coords[1] + nodeCoords[1]];
+            const gridCheck1 = (neighborCoords[0] > -1 && neighborCoords[0] < gridSize[0]);
+            const gridCheck2 = (neighborCoords[1] > -1 && neighborCoords[1] < gridSize[1]);
+            if (gridCheck1 && gridCheck2) {
+                const neighborID = neighborCoords[0].toString() + '-' + neighborCoords[1].toString();
+                const neighborNode = document.getElementById(neighborID);
+                const wallCheck = !neighborNode.classList.contains('wall');
+                const openCheck = !dictGet(discovered, neighborID, false);
+                if (wallCheck && openCheck) {
+                    await sleep(100);
+                    neighborNode.classList.add('viewed');
+                    discovered[neighborID] = true;
+                    cameFrom[neighborID] = nodeID;
+                    queue.push(neighborID);
+                }
+            }
+        }
+
+    }
+
+}
+
 function dictGet(obj, key, defaultValue) {
     const result = obj[key];
     return (typeof result !== "undefined") ? result : defaultValue;

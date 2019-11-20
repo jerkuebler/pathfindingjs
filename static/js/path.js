@@ -1,4 +1,4 @@
-const algorithms = ['A*', 'Dijkstra', 'Depth First Search'];
+const algorithms = ['A*', 'Dijkstra', 'Breadth First Search', 'Depth First Search'];
 addAlgorithms();
 
 const mazes = ['Recursive Division'];
@@ -29,6 +29,7 @@ function updateNotes(e) {
         case 'Dijkstra':
             noteLabel.innerHTML = "Gives the shortest path, does not need to know end node location at start.";
             break;
+        case "Breadth First Search":
         case "Depth First Search":
             noteLabel.innerHTML = "Does not attempt to find the shortest path. Does not need to know end location at start.";
             break;
@@ -75,6 +76,9 @@ function runAlgorithm() {
             break;
         case 'Depth First Search':
             recursiveDFS(pathStart.id, pathEnd.id, gridSize).then(r => console.log(r));
+            break;
+        case "Breadth First Search":
+            BFS(pathStart.id, pathEnd.id, gridSize).then(r => console.log(r));
             break;
     }
 }
