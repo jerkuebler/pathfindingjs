@@ -15,10 +15,10 @@ document.addEventListener('mouseup', setLeftMouseDown);
 document.addEventListener('mouseover', setLeftMouseDown);
 
 document.getElementById('run').addEventListener('click', runAlgorithm);
-document.getElementById('updateGrid').addEventListener('click', updateGrid);
+document.getElementById('resetGrid').addEventListener('click', resetGrid);
 document.getElementById('algorithmSelect').addEventListener('change', updateNotes);
 
-document.getElementById('mazeButton').addEventListener('click', createMaze);
+document.getElementById('mazeSelect').addEventListener('change', createMaze);
 
 function updateNotes(e) {
     const noteLabel = document.getElementById('notes');
@@ -36,14 +36,31 @@ function updateNotes(e) {
     }
 }
 
-function updateGrid() {
+function resetGrid() {
     pathStart = NaN;
     pathEnd = NaN;
     grid.parentNode.removeChild(grid);
     grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
 }
 
+function clearWalls() {
+    for (let i=0; i<gridSize[0];i++){
+        for (let j=0; j<gridSize[1];j++){
+            const nodeID = i.toString() + '-' + j.toString();
+            const node = document.getElementById(nodeID);
+            if (node.classList.contains('start')){
+                node.className = 'start';
+            } else if (node.classList.contains('end')) {
+                node.className = 'end';
+            } else {
+                node.className = '';
+            }
+        }
+    }
+}
+
 function createMaze() {
+    clearWalls();
     const mazeSelect = document.getElementById('mazeSelect');
     const maze = mazeSelect.options[mazeSelect.selectedIndex].text;
     switch (maze) {
