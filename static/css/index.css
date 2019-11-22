@@ -1,3 +1,14 @@
+main {
+    height:100%;
+    margin:auto;
+}
+
+.notes {
+    text-align:center;
+    display: block;
+    margin:auto;
+}
+
 .grid {
     margin:1em auto;
     border-collapse:collapse

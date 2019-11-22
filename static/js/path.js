@@ -1,10 +1,10 @@
 const algorithms = ['A*', 'Dijkstra', 'Breadth First Search', 'Depth First Search'];
-addAlgorithms();
+addSelectOptions(algorithms, 'algorithmSelect', "Choose Algorithm");
 
 const mazes = ['Recursive Division', 'Depth First Search'];
-addMazes();
+addSelectOptions(mazes, 'mazeSelect', "Choose Maze");
 
-let gridSize = [20, 40];
+let gridSize = [15, 40];
 let grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
 
 var mouseDown = false;
@@ -16,7 +16,7 @@ document.addEventListener('mouseover', setLeftMouseDown);
 
 document.getElementById('run').addEventListener('click', runAlgorithm);
 document.getElementById('updateGrid').addEventListener('click', updateGrid);
-document.getElementById('algorithm').addEventListener('change', updateNotes);
+document.getElementById('algorithmSelect').addEventListener('change', updateNotes);
 
 document.getElementById('mazeButton').addEventListener('click', createMaze);
 
@@ -40,8 +40,6 @@ function updateGrid() {
     pathStart = NaN;
     pathEnd = NaN;
     grid.parentNode.removeChild(grid);
-    gridSize[0] = document.getElementById('gridx').value;
-    gridSize[1] = document.getElementById('gridy').value;
     grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
 }
 
@@ -58,17 +56,23 @@ function createMaze() {
     }
 }
 
-function addMazes() {
-    const dropdown = document.getElementById('mazeSelect');
-    mazes.forEach(item => {
+function addSelectOptions(options, selectID, text) {
+    const dropdown = document.getElementById(selectID);
+    options.forEach(item => {
         let option = document.createElement('option');
         option.text = item;
         dropdown.add(option);
     });
+    const defOption = document.createElement('option');
+    defOption.text = text;
+    defOption.selected = true;
+    defOption.disabled = true;
+    defOption.hidden = true;
+    dropdown.add(defOption);
 }
 
 function runAlgorithm() {
-    const algorithm = document.getElementById('algorithm');
+    const algorithm = document.getElementById('algorithmSelect');
     const alg = algorithm.options[algorithm.selectedIndex].text;
     switch (alg) {
         case 'A*':
@@ -84,15 +88,6 @@ function runAlgorithm() {
             BFS(pathStart.id, pathEnd.id, gridSize).then(r => console.log(r));
             break;
     }
-}
-
-function addAlgorithms() {
-    const dropdown = document.getElementById('algorithm');
-    algorithms.forEach(item => {
-        let option = document.createElement('option');
-        option.text = item;
-        dropdown.add(option);
-    });
 }
 
 function setLeftMouseDown(e) {
