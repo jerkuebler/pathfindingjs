@@ -112,7 +112,7 @@ function setLeftMouseDown(e) {
 }
 
 function cellClicked(el, ev) {
-    if (!el.active || (!mouseDown && ev === "mouseover")) {
+    if (!mouseDown && ev === "mouseover") {
         return
     }
     el.classList.contains('wall') ? el.classList.remove('wall') : el.classList.add('wall');
@@ -207,7 +207,6 @@ function clickableGrid(rows, cols, callback) {
         for (let c=0; c<cols;++c){
             const cell = tr.appendChild(document.createElement('td'));
             cell.id = r.toString() + "-" + c.toString();
-            cell.active = true;
             cell.addEventListener('mouseover', ((cell) => (event) => {
                 callback(cell, event.type);
             })(cell), false);
