@@ -1,53 +1,93 @@
 function recursiveDivisionMaze(start, end, gridSize){
 
     /*function to divide the given area recursively until the required resolution is reached */
-    async function divide(minx, miny, width, height, orientation) {
+    async function divide(x, y, width, height, orientation) {
+        if (width < 2 || height < 2){return}
         if (orientation === 'horizontal') {
-            if (width - minx < 2) {
-                return;
+            
+            let ny
+            for (i = 0; i<50; i++){
+                ny = y + randomPoint(height - 2) + 1
+                if (checkHole(x, width, ny, true, gridSize)){
+                    addWall(x, width, ny, true);
+                    break
+                }
+            }
+            
+            await sleep(500);
+            let h = ny - y
+            divide(x, y, width, h, chooseOrientation(width, h));
+
+            h = y + height - ny - 1
+            divide(x, ny + 1, width, h, chooseOrientation(width, h));
+        } else {
+
+            let nx
+            for (i = 0; i<50; i++){
+                nx = x + randomPoint(width - 2) + 1
+                if (checkHole(y, height, nx, false, gridSize)){
+                    addWall(y, height, nx, false);
+                    break
+                }
             }
 
-            let y = Math.floor(randomPoint(miny, height) / 2) * 2;
-            addWall(minx, width, y, true);
             await sleep(500);
-            divide(minx, miny, width, y-1, 'vertical');
-            divide(minx, y + 1, width, height, 'vertical');
-        } else {
-            if (height - miny < 2) {
-                return;
-            }
-            let x = Math.floor(randomPoint(minx, width) / 2) * 2;
-            addWall(miny, height, x, false);
-            await sleep(500);
-            divide(minx, miny, x-1, height, 'horizontal');
-            divide(x + 1, miny, width, height, 'horizontal');
+
+            let w = nx - x
+            divide(x, y, w, height, chooseOrientation(w, height));
+
+            w = x + width - nx - 1
+            divide(nx + 1, y, w, height, chooseOrientation(w, height));
         }
     }
-    divide(0, 0, gridSize[0]-1, gridSize[1]-1, chooseOrientation(gridSize[0], gridSize[1]))
+    divide(0, 0, gridSize[0], gridSize[1], chooseOrientation(gridSize[0], gridSize[1]))
 }
 
-async function addWall(min, max, perp, h) {
-    let hole = Math.floor(randomPoint(min, max) / 2) * 2 + 1;
+function checkHole(start, len, perp, h, gridSize) {
+    let check1 = false;
+    let check2 = false;
+    const limit = h ? gridSize[0] : gridSize[1]
+    /* check the beginning of the wall */
+    if (start === 0) {check1 = true} else {
+        const node1check = !document.getElementById(getElementWithDir(start - 1, perp, h)).classList.contains('wall');
+        const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start - 1, perp - 1, h)).classList.contains('wall');
+        const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start - 1, perp + 1, h)).classList.contains('wall');
+        check1 = !(node1check && node2check && node3check)
+    }
+    /* check the end of the wall */
+    if (start + len === limit) {check2 = true} else {
+        const node1check = !document.getElementById(getElementWithDir(start+len, perp, h)).classList.contains('wall');
+        const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start+len, perp - 1, h)).classList.contains('wall');
+        const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start+len, perp + 1, h)).classList.contains('wall');
+    check2 = !(node1check && node2check && node3check)
+    }
+    return (check1 && check2)
+}
 
-    for (let i = min; i <= max; i++) {
+function getElementWithDir(start, perp, h){
+    if (h) {
+        return (start).toString() + '-' + (perp).toString()
+    } else {
+        return (perp).toString() + '-' + (start).toString()
+    }
+}
+
+async function addWall(start, len, perp, h) {
+    let hole = randomPoint(len) + start
+
+    for (let i = start; i < len + start; i++) {
         if (!(i === hole)) {
-            let nodeID;
-            if (h) {
-                nodeID = i.toString() + '-' + perp.toString();
-            } else {
-                nodeID = perp.toString() + '-' + i.toString();
-            }
-            await sleep(100);
-            const node = document.getElementById(nodeID);
+            const node = document.getElementById(getElementWithDir(i, perp, h));
             if (!node.classList.contains('start') && !node.classList.contains('end')){
                 node.classList.add('wall');
+                await sleep(100);
             }
         }
     }
 }
 
-function randomPoint(min, max) {
-    return Math.floor(Math.random() * (max - min) + min + 1);
+function randomPoint(len) {
+    return Math.floor(Math.random() * len)
 }
 
 function chooseOrientation(width, height) {

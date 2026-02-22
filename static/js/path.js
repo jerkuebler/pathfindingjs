@@ -4,7 +4,7 @@ addSelectOptions(algorithms, 'algorithmSelect', "Choose Algorithm");
 const mazes = ['Recursive Division', 'Depth First Search'];
 addSelectOptions(mazes, 'mazeSelect', "Choose Maze");
 
-let gridSize = [15, 40];
+let gridSize = [25, 40];
 let grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
 
 var mouseDown = false;
