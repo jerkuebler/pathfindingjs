@@ -52,14 +52,14 @@ function checkHole(start, len, perp, h, gridSize) {
         const node1check = !document.getElementById(getElementWithDir(start - 1, perp, h)).classList.contains('wall');
         const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start - 1, perp - 1, h)).classList.contains('wall');
         const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start - 1, perp + 1, h)).classList.contains('wall');
-        check1 = !(node1check && node2check && node3check)
+        check1 = !(node1check && (node2check || node3check))
     }
     /* check the end of the wall */
     if (start + len === limit) {check2 = true} else {
         const node1check = !document.getElementById(getElementWithDir(start+len, perp, h)).classList.contains('wall');
         const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start+len, perp - 1, h)).classList.contains('wall');
         const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start+len, perp + 1, h)).classList.contains('wall');
-    check2 = !(node1check && node2check && node3check)
+    check2 = !(node1check && (node2check || node3check))
     }
     return (check1 && check2)
 }
@@ -80,7 +80,6 @@ async function addWall(start, len, perp, h) {
             const node = document.getElementById(getElementWithDir(i, perp, h));
             if (!node.classList.contains('start') && !node.classList.contains('end')){
                 node.classList.add('wall');
-                await sleep(100);
             }
         }
     }
