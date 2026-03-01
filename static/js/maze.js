@@ -1,65 +1,58 @@
 function recursiveDivisionMaze(start, end, gridSize){
 
     /*function to divide the given area recursively until the required resolution is reached */
-    async function divide(x, y, width, height, orientation) {
-        if (width < 2 || height < 2){return}
-        if (orientation === 'horizontal') {
-            
-            let ny
-            for (i = 0; i<50; i++){
-                ny = y + randomPoint(height - 2) + 1
-                if (checkHole(x, width, ny, true, gridSize)){
-                    addWall(x, width, ny, true);
-                    break
-                }
-            }
-            
-            await sleep(500);
-            let h = ny - y
-            divide(x, y, width, h, chooseOrientation(width, h));
+    async function divide(row, column, height, width, tall) {
+    if (height < 2 || width < 2){return}
+    let [start, start_len, perp, perp_len] = tall ? [row, height, column, width] : [column, width, row, height]
 
-            h = y + height - ny - 1
-            divide(x, ny + 1, width, h, chooseOrientation(width, h));
+    let n_perp
+    let perp_array = getPossiblePos(perp, perp_len)
+    while (perp_array.length > 0){
+        perp_idx = randomPoint(perp_array.length)
+        n_perp = perp_array[perp_idx]
+        if (checkHole(start, start_len, n_perp, tall, gridSize)){
+            addWall(start, start_len, n_perp, tall);
+            break
         } else {
-
-            let nx
-            for (i = 0; i<50; i++){
-                nx = x + randomPoint(width - 2) + 1
-                if (checkHole(y, height, nx, false, gridSize)){
-                    addWall(y, height, nx, false);
-                    break
-                }
-            }
-
-            await sleep(500);
-
-            let w = nx - x
-            divide(x, y, w, height, chooseOrientation(w, height));
-
-            w = x + width - nx - 1
-            divide(nx + 1, y, w, height, chooseOrientation(w, height));
+            perp_array.splice(perp_idx, 1)
         }
     }
+
+    if (perp_array.length > 0) {
+        await sleep(500);
+        let new_len = n_perp - perp
+        let [nrow, ncolumn, nh, nw] = tall ? [row, column, height, new_len] : [row, column, new_len, width]
+        divide(nrow, ncolumn, nh, nw, chooseOrientation(nh, nw));
+
+        new_len = perp + perp_len - n_perp - 1;
+        [nrow, ncolumn, nh, nw] = tall ? [row, n_perp + 1, height, new_len] : [n_perp + 1, column, new_len, width]
+        divide(nrow, ncolumn, nh, nw, chooseOrientation(nh, nw));
+        } else {
+            console.log(`Failed to draw line, row=${row}, column=${column}, height=${height}, width=${width}, tall=${tall}`)
+        }             
+    
+}
     divide(0, 0, gridSize[0], gridSize[1], chooseOrientation(gridSize[0], gridSize[1]))
 }
 
 function checkHole(start, len, perp, h, gridSize) {
     let check1 = false;
     let check2 = false;
-    const limit = h ? gridSize[0] : gridSize[1]
+    const line_limit = h ? gridSize[0] : gridSize[1]
+    const perp_limit = h ? gridSize[1] : gridSize[0]
     /* check the beginning of the wall */
     if (start === 0) {check1 = true} else {
         const node1check = !document.getElementById(getElementWithDir(start - 1, perp, h)).classList.contains('wall');
-        const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start - 1, perp - 1, h)).classList.contains('wall');
-        const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start - 1, perp + 1, h)).classList.contains('wall');
-        check1 = !(node1check && (node2check || node3check))
+        const node2check = (perp - 1 >= 0) && document.getElementById(getElementWithDir(start - 1, perp - 1, h)).classList.contains('wall');
+        const node3check = (perp + 1 < perp_limit) && document.getElementById(getElementWithDir(start - 1, perp + 1, h)).classList.contains('wall');
+        check1 = !(node1check && node2check && node3check)
     }
     /* check the end of the wall */
-    if (start + len === limit) {check2 = true} else {
+    if (start + len === line_limit) {check2 = true} else {
         const node1check = !document.getElementById(getElementWithDir(start+len, perp, h)).classList.contains('wall');
-        const node2check = (perp - 1 >= 0) || document.getElementById(getElementWithDir(start+len, perp - 1, h)).classList.contains('wall');
-        const node3check = (perp + 1 < limit) || document.getElementById(getElementWithDir(start+len, perp + 1, h)).classList.contains('wall');
-    check2 = !(node1check && (node2check || node3check))
+        const node2check = (perp - 1 >= 0) && document.getElementById(getElementWithDir(start+len, perp - 1, h)).classList.contains('wall');
+        const node3check = (perp + 1 < perp_limit) && document.getElementById(getElementWithDir(start+len, perp + 1, h)).classList.contains('wall');
+        check2 = !(node1check && node2check && node3check)
     }
     return (check1 && check2)
 }
@@ -89,15 +82,14 @@ function randomPoint(len) {
     return Math.floor(Math.random() * len)
 }
 
-function chooseOrientation(width, height) {
-    if (width < height) {
-        return "horizontal"
-    }
-    if (height < width) {
-        return 'vertical'
-    } else {
-        return Math.round(Math.random()) ? 'horizontal' : 'vertical';
-    }
+function getPossiblePos(start, len) {
+    return Array.from({length: len - 2}, (_, index) => start + index + 1)
+}
+
+function chooseOrientation(height, width) {
+    if (height === width) {return Math.round(Math.random()) ? true : false}
+
+    return (width > height)
 }
 
 function DFSMaze(start, end, gridSize) {

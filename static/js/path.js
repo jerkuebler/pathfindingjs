@@ -4,7 +4,7 @@ addSelectOptions(algorithms, 'algorithmSelect', "Choose Algorithm");
 const mazes = ['Recursive Division', 'Depth First Search'];
 addSelectOptions(mazes, 'mazeSelect', "Choose Maze");
 
-let gridSize = [25, 40];
+let gridSize = [26, 40];
 let grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
 
 var mouseDown = false;
@@ -41,6 +41,7 @@ function resetGrid() {
     pathEnd = NaN;
     grid.parentNode.removeChild(grid);
     grid = clickableGrid(gridSize[0], gridSize[1], cellClicked);
+    document.getElementById('mazeSelect').selectedIndex = 0;
 }
 
 function clearWalls() {
@@ -75,17 +76,19 @@ function createMaze() {
 
 function addSelectOptions(options, selectID, text) {
     const dropdown = document.getElementById(selectID);
-    options.forEach(item => {
-        let option = document.createElement('option');
-        option.text = item;
-        dropdown.add(option);
-    });
+
     const defOption = document.createElement('option');
     defOption.text = text;
     defOption.selected = true;
     defOption.disabled = true;
     defOption.hidden = true;
     dropdown.add(defOption);
+
+    options.forEach(item => {
+        let option = document.createElement('option');
+        option.text = item;
+        dropdown.add(option);
+    });
 }
 
 function runAlgorithm() {
